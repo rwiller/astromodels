@@ -875,7 +875,16 @@ class XSPECTableModel(object):
             energies = f["ENERGIES"]
             ene_lo = energies.data["ENERG_LO"]
             ene_hi = energies.data["ENERG_HI"]
-
+            spectra = f["SPECTRA"]
+            
+            
+            if f[0].header["MODLUNIT"] == 'photons/cm^2/s' :
+               delta_ene = ene_hi-ene_lo
+               self._spectrum = spectra.data["INTPSPEC"]/delta_ene
+               self._log_centers = False
+            else:
+               self._spectrum = spectra.data["INTPSPEC"]
+               
             # log centers
 
             if self._log_centers:
@@ -890,11 +899,7 @@ class XSPECTableModel(object):
             self._names = params.data["NAME"]
 
             self._n_params = len(self._names)
-
-            spectra = f["SPECTRA"]
-
-            self._spectrum = spectra.data["INTPSPEC"]
-
+     
             self._params_dict = {}
 
             for i, name in enumerate(self._names):
